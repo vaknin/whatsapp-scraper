@@ -1,0 +1,41 @@
+.App {
+    text-align: center;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    background-color: rgb(224, 224, 224);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.entry {
+    transition: 0.75s ease all;
+}
+
+.entry:hover {
+    border-radius: 5px;
+    background-color: rgb(255, 0, 0);
+    color: white;
+}
+
+.files, .files:focus{
+    outline: 1px dashed #92b0b3;
+    outline-offset: -4px;
+    padding: 12vh 0vw 12vh 26vw;
+    font-weight: 100;
+    transition: ease 1.5s all;
+
+}
+
+.files:hover{
+    padding: 35vh 0vw 35vh 26vw;
+    background-color: rgb(189, 189, 189);
+}
+
+.color input{ background-color:#f1f1f1;}
