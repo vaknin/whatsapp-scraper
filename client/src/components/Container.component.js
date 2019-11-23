@@ -57,7 +57,7 @@ export class Container extends Component {
                     if (word === 'MediaMessages'){
                         let count = keyValuePair[1];
                         chat.splice(chat.indexOf(keyValuePair), 1);
-                        this.setState({mediaMessages: count});
+                        this.setState({media: count});
                         break;
                     }
                 }
@@ -104,17 +104,38 @@ export class Container extends Component {
         this.prepareChat(chat);
     }
 
+    // Reset
+    reset = () => {
+        this.setState({
+            media: undefined,
+            chat: undefined,
+            words: undefined,
+            emojis: undefined,
+        });
+    }
+
     render() {
         return (
             <div>
-                {/*File Uploader*/}
+
+                { /*Header*/ }
+                <h1 class="display-4 mt-3 mb-5 text-center">WhatsApp Analyzer</h1>
+
+                { /*File Uploader*/ }
                 <div>
-                {this.state.chat ?
-                <TopContainer words={this.state.words} emojis={this.state.emojis} remove={this.remove} />
-                :
-                <FileUploader upload={this.upload} />
-                }
+                    {this.state.chat ?
+                    <TopContainer
+                        words={this.state.words}
+                        emojis={this.state.emojis}
+                        media={this.state.media}
+                        remove={this.remove}
+                        reset={this.reset}
+                    />
+                    :
+                    <FileUploader upload={this.upload} />
+                    }
                 </div>
+
             </div>
         )
     }

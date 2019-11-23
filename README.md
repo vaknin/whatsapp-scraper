@@ -13,5 +13,5 @@ The react front end will run on http://localhost:3000, and the server will run o
 
 ## Demonstration
 ### Simply drag and drop to upload the whatsapp chat exported file and analyze it.
-[demo]: https://i.imgur.com/70BcZiT.gif "Demo"
+[demo]: https://i.imgur.com/0AexPsL.gif "Demo"
 ![Demo][demo]
