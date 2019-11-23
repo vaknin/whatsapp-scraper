@@ -44,7 +44,7 @@ export class Container extends Component {
         data.append('file', file);
         
         // Send the request
-        axios.post('http://localhost:5000/upload', data,
+        axios.post('/upload', data,
         {
             }).then(res => {
 
