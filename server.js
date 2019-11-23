@@ -10,6 +10,16 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Production
+if (process.env.NODE_ENV === 'production') {
+
+    const path = require('path');
+    app.use(express.static('client/build'));
+    app.get('*', (req,res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+    });
+}
+
 // On POST
 app.post('/upload', upload.single('file'), (req, res) => {
     let chatFile = req.file.buffer.toString('utf8');
@@ -18,4 +28,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
 });
 
 // Listen
-app.listen(port);
+app.listen(port, () => {
+    console.log(`The server is running on port ${port}.`);
+});

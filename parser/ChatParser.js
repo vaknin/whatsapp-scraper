@@ -17,8 +17,13 @@ class ChatParser{
         return this.getRanking(sentences);
     }
 
-    // Receives a WhatsApp chat and returns an array of message objects with text,date,time etc.
+    // Receives a WhatsApp chat and returns an array of message objects with text
     getMessages(chat){
+
+        // Local functions
+        function pushMessage(text){
+            messages.push(new Message(text.replace(/[^א-תA-z \u00a9|\u00ae|\u2000-\u3300|\ud83c\ud000-\udfff|\ud83d\ud000-\udfff|\ud83e\ud000-\udfff]/gi,' ')));
+        }
 
         function removeInvalidEmojis(string){
             let regex = /[🏻🏼🏽🏾🏿♀�]/g;
@@ -27,55 +32,43 @@ class ChatParser{
 
         let messages = [];
 
-        outerloop:
-        while (true){
+        while (chat.length > 0){
 
-            // Extract date & time
-            let date = chat.substring(0, chat.indexOf(','));
-            let time = chat.substring(chat.indexOf(',') + 2, chat.indexOf('-') - 1);
-
-            // Extract message & sender
+            // Extract message
             let text = chat.substring(chat.indexOf(':', chat.indexOf(':') + 1) + 2 , chat.indexOf('\n'));
             text = removeInvalidEmojis(text);
             
-            let sender = 'sender';
-
             // Delete the extracted line
             chat = chat.slice(chat.indexOf('\n') + 1);
 
             // Media message - set text as undefined
             if(text.includes('Media omitted')){
-                let msg = new Message(date, time, sender, undefined);
+                let msg = new Message(undefined);
                 messages.push(msg);
                 continue;
             }
 
-            // Check if the next line is a new message or a newline
-            innerloop:
+            // Check if the next line is a completely new message or a newline(addition to last message)
             while(true){
 
-                const pushMessage = () => messages.push(new Message(date, time, sender, text.replace(/[^א-תA-z \u00a9|\u00ae|\u2000-\u3300|\ud83c\ud000-\udfff|\ud83d\ud000-\udfff|\ud83e\ud000-\udfff]/gi,' ')));
-                
                 // The next line to examine
                 let nextLine = chat.substring(0, chat.indexOf('\n'));
-                if (nextLine == ''){
-                    pushMessage();
-                    break outerloop;
+
+                // New message
+                if(nextLine.includes('-') && nextLine.includes(',') && nextLine.includes('/') && nextLine.includes(':')){
+                    pushMessage(text);
+                    break;
                 }
 
-                // Contains one of our names - might be a line or a msg
-                if (nextLine.includes('טל') || nextLine.includes('אביב')){
-
-                    // New message
-                    if(nextLine.includes('-') && nextLine.includes(',') && nextLine.includes('/') && nextLine.includes(':')){
-                        pushMessage();
-                        break innerloop;
-                    };
+                // Add text to last message
+                else{
+                    text += nextLine;
+                    chat = chat.slice(chat.indexOf('\n') + 1);
+                    if (chat.length == 0){
+                        pushMessage(text);
+                        break;
+                    }
                 }
-
-                // New line
-                text += nextLine;
-                chat = chat.slice(chat.indexOf('\n') + 1);
             }
         }
 
@@ -88,6 +81,13 @@ class ChatParser{
         let pieces = [];
         let currentWord = '';
         let halfEmoji = '';
+
+        const pushCurrentWord = () => {
+            if (currentWord.length > 1){
+                pieces.push(currentWord);
+                currentWord = '';
+            }
+        }
 
         // Media message
         if (sentence == undefined){
@@ -102,14 +102,11 @@ class ChatParser{
             // Emoji
             if (this.isEmoji(char)){
 
-                // Push the piece that is being built
-                if (currentWord){
-                    pieces.push(currentWord);
-                    currentWord = '';
-                }
+                // Push the piece that is being built - if one exists
+                pushCurrentWord();
 
                 // There's already half an emoji - add the other half and push the emoji
-                else if (halfEmoji){
+                if (halfEmoji){
                     
                     let emoji = halfEmoji + char;
                     halfEmoji = '';
@@ -124,13 +121,9 @@ class ChatParser{
             // Check for space to end the word
             else if (char == ' '){
 
-                // Add the last character - if a piece is being built
-                if (currentWord){
-                    pieces.push(currentWord); 
-                    currentWord = '';
-                }
+                pushCurrentWord();
 
-                else if (halfEmoji){
+                if (halfEmoji){
                     halfEmoji = '';
                 }
                 continue; // Continue to next word or return if last iteration
@@ -144,10 +137,9 @@ class ChatParser{
         
                 // Last iteration - push the word
                 if (i == sentence.length - 1){
-                    pieces.push(currentWord);
+                    pushCurrentWord();
                 }
             }
-
         }
 
         return pieces;
