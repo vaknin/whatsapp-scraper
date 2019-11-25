@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Reset from './Reset.component';
 
 
-export class TopContainer extends Component {
+export class Results extends Component {
 
     // Receive an array of Emojis/Words and its count, and display it
     renderResults = type => {
@@ -65,4 +65,4 @@ export class TopContainer extends Component {
     }
 }
 
-export default TopContainer;
+export default Results;

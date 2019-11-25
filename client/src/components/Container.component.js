@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import axios from 'axios';
-import TopContainer from './TopContainer.component';
+import instructions from '../images/instructions.jpeg';
+import Results from './Results.component';
 import FileUploader from './FileUploader.component';
 
 export class Container extends Component {
@@ -119,12 +120,13 @@ export class Container extends Component {
             <div>
 
                 { /*Header*/ }
-                <h1 class="display-4 mt-3 mb-5 text-center">WhatsApp Analyzer</h1>
+                <h1 className="display-3 mt-3 mb-5 text-center strong">WhatsApp Analyzer</h1>
+                <br/>
 
-                { /*File Uploader*/ }
+                { /*Body*/ }
                 <div>
                     {this.state.chat ?
-                    <TopContainer
+                    <Results
                         words={this.state.words}
                         emojis={this.state.emojis}
                         media={this.state.media}
@@ -132,7 +134,11 @@ export class Container extends Component {
                         reset={this.reset}
                     />
                     :
-                    <FileUploader upload={this.upload} />
+                    <div className="text-center">
+                        <h4>Upload the exported WhatsApp chat file in order to analyze it.</h4>
+                        <img src={instructions}></img>
+                        <FileUploader upload={this.upload} />
+                    </div>
                     }
                 </div>
 
